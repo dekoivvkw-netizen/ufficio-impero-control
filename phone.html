@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b0a08">
+<title>IMPERO Control</title>
+<style>
+:root { --bg:#0b0a08; --card:#15130f; --border:#2e2918; --gold:#c9a227; --text:#ece5d3; --muted:#8d846c; }
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif; padding:env(safe-area-inset-top) 16px 24px; min-height:100vh; }
+h1 { font-size:24px; font-weight:700; }
+.sub { color:var(--muted); font-size:13px; margin:4px 0 16px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:12px; }
+.row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; }
+.row span:last-child { font-weight:600; font-size:17px; }
+.btn { display:block; width:100%; padding:16px; border:none; border-radius:14px; font-size:17px; font-weight:600; margin:8px 0; }
+.btn-gold { background:var(--gold); color:#0b0a08; }
+.btn-dark { background:#2e2918; color:var(--text); }
+.btn-red { background:#8b3a3a; color:#fff; }
+input, select { width:100%; padding:14px; border-radius:12px; border:1px solid var(--border); background:#1a1814; color:var(--text); margin:6px 0; font-size:16px; }
+.login { max-width:400px; margin:60px auto; }
+.hidden { display:none !important; }
+.ok { color:#6b9e6b; }
+.warn { color:var(--gold); }
+.err { color:#c96b6b; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+</style>
+</head>
+<body>
+<div id="login" class="login">
+  <div class="card">
+    <h1>UFFICIO IMPERO</h1>
+    <p class="sub">Control · CEO Ara</p>
+    <input type="password" id="pw" placeholder="Password" autofocus autocomplete="current-password">
+    <button class="btn btn-gold" onclick="doLogin()">Entra</button>
+    <p id="err" class="err" style="display:none;margin-top:10px;text-align:center;">Password errata</p>
+  </div>
+</div>
+<div id="app" class="hidden">
+  <h1>Control</h1>
+  <p class="sub">UFFICIO IMPERO</p>
+  <div class="card">
+    <div class="row"><span>Capitale</span><span id="cap">— €</span></div>
+    <div class="row"><span>Equity</span><span id="eq">— €</span></div>
+    <div class="row"><span>Drawdown</span><span id="dd">— %</span></div>
+  </div>
+  <div class="card">
+    <div class="row"><span>Gate</span><span id="gate" class="ok">CHIUSO</span></div>
+    <button class="btn btn-dark" onclick="toggleGate()">Apri / Chiudi Gate</button>
+  </div>
+  <div class="card">
+    <div class="row"><span>Kill Switch</span><span id="kill" class="ok">OK</span></div>
+    <button class="btn btn-red" onclick="doKill()">Attiva Kill</button>
+  </div>
+  <div class="card">
+    <p style="margin-bottom:8px;font-weight:600;">Ordine Manuale</p>
+    <input id="sym" value="BZ=F" placeholder="Simbolo">
+    <div class="grid2">
+      <select id="side"><option>LONG</option><option>SHORT</option></select>
+      <input id="size" type="number" value="50" placeholder="Size €">
+    </div>
+    <input id="entry" type="number" step="0.0001" placeholder="Entry">
+    <div class="grid2">
+      <input id="stop" type="number" step="0.0001" placeholder="Stop">
+      <input id="tp" type="number" step="0.0001" placeholder="Take Profit">
+    </div>
+    <button class="btn btn-gold" onclick="sendOrder()">Metti in coda</button>
+    <p id="msg" style="text-align:center;margin-top:8px;font-size:14px;"></p>
+  </div>
+  <button class="btn btn-dark" onclick="logout()">Esci</button>
+</div>
+<script>
+const PASS = "impero2026";
+let gateOpen = false;
+function doLogin() {
+  if (document.getElementById("pw").value === PASS) {
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+  } else {
+    document.getElementById("err").style.display = "block";
+  }
+}
+function logout() {
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("login").classList.remove("hidden");
+  document.getElementById("pw").value = "";
+  document.getElementById("err").style.display = "none";
+}
+function toggleGate() {
+  gateOpen = !gateOpen;
+  const el = document.getElementById("gate");
+  el.textContent = gateOpen ? "APERTO" : "CHIUSO";
+  el.className = gateOpen ? "warn" : "ok";
+}
+function doKill() {
+  document.getElementById("kill").textContent = "ATTIVO";
+  document.getElementById("kill").className = "err";
+}
+function sendOrder() {
+  const sym = document.getElementById("sym").value.trim();
+  const entry = document.getElementById("entry").value;
+  const msg = document.getElementById("msg");
+  if (!sym || !entry) {
+    msg.textContent = "Simbolo e Entry obbligatori";
+    msg.className = "err";
+    return;
+  }
+  msg.textContent = "Ordine in coda";
+  msg.className = "ok";
+}
+</script>
+</body>
+</html>
