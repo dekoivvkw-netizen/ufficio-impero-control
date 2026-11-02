@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0c10">
+<title>GROK AI TRADING TERMINAL</title>
+<style>
+:root { --bg:#0a0c10; --card:#12151c; --border:#1e2430; --blue:#3b82f6; --gold:#d4af37; --green:#22c55e; --red:#ef4444; --text:#e2e8f0; --muted:#64748b; }
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,sans-serif; padding:env(safe-area-inset-top) 12px 24px; }
+.header { text-align:center; margin-bottom:16px; }
+.header h1 { font-size:22px; font-weight:800; line-height:1.1; }
+.header h1 span { color:var(--blue); }
+.sub { color:var(--muted); font-size:12px; margin-top:4px; }
+.agents { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:12px 0; }
+.agent { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 6px; text-align:center; }
+.agent .icon { font-size:22px; margin-bottom:4px; }
+.agent .name { font-size:10px; font-weight:600; color:var(--muted); }
+.agent .status { font-size:9px; color:var(--green); margin-top:2px; }
+.agent.running .status::before { content:"● "; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; }
+.metric { font-size:20px; font-weight:700; }
+.label { font-size:10px; color:var(--muted); margin-top:2px; }
+.btn { width:100%; padding:14px; border:none; border-radius:12px; font-size:14px; font-weight:600; margin:6px 0; }
+.btn-blue { background:var(--blue); color:#fff; }
+.btn-dark { background:#1e2430; color:var(--text); border:1px solid var(--border); }
+.btn-red { background:var(--red); color:#fff; }
+input, select { width:100%; padding:12px; border-radius:10px; border:1px solid var(--border); background:#0f1218; color:var(--text); margin:4px 0; font-size:15px; }
+.login { max-width:360px; margin:70px auto; }
+.hidden { display:none !important; }
+.ok { color:var(--green); }
+.warn { color:var(--gold); }
+.err { color:var(--red); }
+.topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:12px; }
+.badge { background:#1e2430; border-radius:20px; padding:3px 8px; font-size:10px; color:var(--blue); }
+</style>
+</head>
+<body>
+<div id="login" class="login">
+  <div class="card" style="text-align:center;padding:28px 20px;">
+    <div class="badge" style="display:inline-block;margin-bottom:12px;">LIVE</div>
+    <h1 style="font-size:20px;">GROK AI<br><span style="color:var(--blue);">TRADING TERMINAL</span></h1>
+    <p class="sub" style="margin:10px 0 16px;">6 AI Agents · CEO Ara</p>
+    <input type="password" id="pw" placeholder="Password" autofocus style="text-align:center;">
+    <button class="btn btn-blue" onclick="doLogin()">Entra</button>
+    <p id="err" class="err" style="display:none;margin-top:10px;">Password errata</p>
+  </div>
+</div>
+<div id="app" class="hidden">
+  <div class="topbar">
+    <div class="badge">THE TRADING FLOOR</div>
+    <div id="gate-status" class="ok">Gate CHIUSO</div>
+  </div>
+  <div class="header">
+    <h1>I BUILT AN ENTIRE<br><span>GROK AI TRADING TERMINAL</span></h1>
+    <p class="sub">Real time data · 6 AI agents · Analyze · Risk · All in one</p>
+  </div>
+  <div class="agents">
+    <div class="agent running"><div class="icon">🔴</div><div class="name">01 SCANNER</div><div class="status">RUNNING</div></div>
+    <div class="agent running"><div class="icon">🟢</div><div class="name">02 ANALYST</div><div class="status">RUNNING</div></div>
+    <div class="agent running"><div class="icon">🟡</div><div class="name">03 RESEARCH</div><div class="status">RUNNING</div></div>
+    <div class="agent running"><div class="icon">🔴</div><div class="name">04 RISK MGR</div><div class="status">RUNNING</div></div>
+    <div class="agent running"><div class="icon">🟣</div><div class="name">05 EXECUTOR</div><div class="status">RUNNING</div></div>
+    <div class="agent running"><div class="icon">🔵</div><div class="name">06 PORTFOLIO</div><div class="status">RUNNING</div></div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="metric" id="cap">—</div>
+      <div class="label">CAPITALE €</div>
+    </div>
+    <div class="card">
+      <div class="metric" id="dd">—</div>
+      <div class="label">DRAWDOWN %</div>
+    </div>
+  </div>
+  <div class="card">
+    <button class="btn btn-dark" onclick="toggleGate()">Apri / Chiudi Gate</button>
+    <button class="btn btn-red" onclick="doKill()">Kill Switch</button>
+  </div>
+  <div class="card">
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px;letter-spacing:1px;">ORDINE MANUALE</p>
+    <input id="sym" value="BZ=F" placeholder="Simbolo">
+    <div class="grid2">
+      <select id="side"><option>LONG</option><option>SHORT</option></select>
+      <input id="size" type="number" value="50" placeholder="Size €">
+    </div>
+    <input id="entry" type="number" step="0.0001" placeholder="Entry">
+    <div class="grid2">
+      <input id="stop" type="number" step="0.0001" placeholder="Stop">
+      <input id="tp" type="number" step="0.0001" placeholder="TP">
+    </div>
+    <button class="btn btn-blue" onclick="sendOrder()">Invia in coda</button>
+    <p id="msg" style="text-align:center;margin-top:6px;font-size:13px;"></p>
+  </div>
+  <button class="btn btn-dark" onclick="logout()" style="margin-top:10px;">Esci</button>
+</div>
+<script>
+const PASS = "impero2026";
+let gateOpen = false;
+function doLogin() {
+  if (document.getElementById("pw").value === PASS) {
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+  } else document.getElementById("err").style.display = "block";
+}
+function logout() {
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("login").classList.remove("hidden");
+  document.getElementById("pw").value = "";
+  document.getElementById("err").style.display = "none";
+}
+function toggleGate() {
+  gateOpen = !gateOpen;
+  const el = document.getElementById("gate-status");
+  el.textContent = gateOpen ? "Gate APERTO" : "Gate CHIUSO";
+  el.className = gateOpen ? "warn" : "ok";
+}
+function doKill() {
+  document.getElementById("gate-status").textContent = "KILL ATTIVO";
+  document.getElementById("gate-status").className = "err";
+}
+function sendOrder() {
+  const sym = document.getElementById("sym").value.trim();
+  const entry = document.getElementById("entry").value;
+  const msg = document.getElementById("msg");
+  if (!sym || !entry) { msg.textContent = "Simbolo e Entry obbligatori"; msg.className = "err"; return; }
+  msg.textContent = "Ordine in coda"; msg.className = "ok";
+}
+</script>
+</body>
+</html>
