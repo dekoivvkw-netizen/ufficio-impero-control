@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#07090d">
+<title>IMPERO · Dashboard</title>
+<style>
+:root { --bg:#07090d; --card:#0f131a; --border:#1a2030; --blue:#3b82f6; --gold:#eab308; --green:#10b981; --red:#ef4444; --text:#f1f5f9; --muted:#64748b; }
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif; padding:env(safe-area-inset-top) 14px 20px; }
+.screen { max-width:440px; margin:0 auto; }
+.header { text-align:center; margin-bottom:18px; }
+.header h1 { font-size:24px; font-weight:800; letter-spacing:-0.8px; line-height:1.05; }
+.header h1 span { color:var(--blue); }
+.badge { display:inline-block; background:#1e293b; color:var(--blue); border-radius:20px; padding:4px 12px; font-size:10px; font-weight:700; letter-spacing:1px; margin-bottom:8px; }
+.agents { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0; }
+.agent { background:linear-gradient(145deg,#121820,#0c1018); border:1px solid var(--border); border-radius:16px; padding:12px 4px; text-align:center; position:relative; }
+.agent .ico { font-size:26px; filter:drop-shadow(0 0 6px rgba(59,130,246,0.4)); }
+.agent .nm { font-size:9px; color:var(--muted); margin-top:4px; font-weight:700; letter-spacing:0.6px; }
+.agent .st { font-size:8px; color:var(--green); margin-top:3px; font-weight:600; }
+.agent.running::after { content:""; position:absolute; top:8px; right:8px; width:6px; height:6px; background:var(--green); border-radius:50%; box-shadow:0 0 6px var(--green); }
+.metrics { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+.metric { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; }
+.metric .num { font-size:22px; font-weight:700; }
+.metric .lbl { font-size:10px; color:var(--muted); margin-top:2px; letter-spacing:0.5px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:12px; }
+.btn { width:100%; padding:15px; border:none; border-radius:14px; font-size:15px; font-weight:600; margin:6px 0; }
+.btn-blue { background:linear-gradient(180deg,#3b82f6,#2563eb); color:#fff; }
+.btn-dark { background:#1e293b; color:var(--text); border:1px solid var(--border); }
+.btn-red { background:linear-gradient(180deg,#ef4444,#dc2626); color:#fff; }
+input, select { width:100%; padding:13px; border-radius:12px; border:1px solid var(--border); background:#0c1018; color:var(--text); margin:5px 0; font-size:16px; }
+.login { padding-top:60px; text-align:center; }
+.hidden { display:none !important; }
+.ok { color:var(--green); }
+.warn { color:var(--gold); }
+.err { color:var(--red); }
+.top { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.status-pill { font-size:12px; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="screen">
+<div id="login" class="login">
+  <div class="badge">LIVE WIRE</div>
+  <h1>I BUILT AN ENTIRE<br><span>GROK AI TRADING TERMINAL</span></h1>
+  <p style="color:var(--muted);font-size:13px;margin:12px 0 20px;">6 AI Agents · Real-time · CEO Ara</p>
+  <input type="password" id="pw" placeholder="Password" autofocus style="text-align:center;">
+  <button class="btn btn-blue" onclick="login()">Entra</button>
+  <p id="err" class="err" style="display:none;margin-top:10px;">Password errata</p>
+</div>
+<div id="app" class="hidden">
+  <div class="top">
+    <div class="badge">THE TRADING FLOOR</div>
+    <button class="btn btn-dark" style="width:auto;padding:6px 12px;margin:0;font-size:12px;" onclick="logout()">Esci</button>
+  </div>
+  <div class="agents">
+    <div class="agent running"><div class="ico">🔴</div><div class="nm">SCANNER</div><div class="st">RUNNING</div></div>
+    <div class="agent running"><div class="ico">🟢</div><div class="nm">ANALYST</div><div class="st">RUNNING</div></div>
+    <div class="agent running"><div class="ico">🟡</div><div class="nm">RESEARCH</div><div class="st">RUNNING</div></div>
+    <div class="agent running"><div class="ico">🔴</div><div class="nm">RISK MGR</div><div class="st">RUNNING</div></div>
+    <div class="agent running"><div class="ico">🟣</div><div class="nm">EXECUTOR</div><div class="st">RUNNING</div></div>
+    <div class="agent running"><div class="ico">🔵</div><div class="nm">PORTFOLIO</div><div class="st">RUNNING</div></div>
+  </div>
+  <div class="metrics">
+    <div class="metric"><div class="num" id="cap">—</div><div class="lbl">CAPITALE €</div></div>
+    <div class="metric"><div class="num" id="eq">—</div><div class="lbl">EQUITY €</div></div>
+    <div class="metric"><div class="num" id="dd">—</div><div class="lbl">DRAWDOWN %</div></div>
+    <div class="metric"><div class="num ok" id="gate">CHIUSO</div><div class="lbl">GATE</div></div>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <span style="font-size:12px;color:var(--muted);">KILL SWITCH</span>
+      <span class="status-pill ok" id="kill">OK</span>
+    </div>
+    <button class="btn btn-dark" onclick="toggleGate()">Apri / Chiudi Gate</button>
+    <button class="btn btn-red" onclick="doKill()">Attiva Kill</button>
+  </div>
+  <div class="card">
+    <p style="font-size:11px;color:var(--muted);letter-spacing:1.5px;margin-bottom:10px;">ORDINE MANUALE</p>
+    <input id="sym" value="BZ=F" placeholder="Simbolo">
+    <div class="grid2">
+      <select id="side"><option>LONG</option><option>SHORT</option></select>
+      <input id="size" type="number" value="50" placeholder="Size €">
+    </div>
+    <input id="entry" type="number" step="0.0001" placeholder="Entry">
+    <div class="grid2">
+      <input id="stop" type="number" step="0.0001" placeholder="Stop">
+      <input id="tp" type="number" step="0.0001" placeholder="TP">
+    </div>
+    <button class="btn btn-blue" onclick="send()">Invia in coda</button>
+    <p id="msg" style="text-align:center;margin-top:6px;font-size:13px;"></p>
+  </div>
+  <div class="card">
+    <p style="font-size:11px;color:var(--muted);margin-bottom:6px;">DIARIO</p>
+    <div id="diary" style="font-size:12px;color:var(--muted);line-height:1.7;">Nessuna attività</div>
+  </div>
+</div>
+</div>
+<script>
+const PASS = "impero2026";
+let gateOpen = false;
+let diary = [];
+function login() {
+  if (document.getElementById("pw").value === PASS) {
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    addDiary("Sessione avviata");
+  } else document.getElementById("err").style.display = "block";
+}
+function logout() {
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("login").classList.remove("hidden");
+  document.getElementById("pw").value = "";
+}
+function toggleGate() {
+  gateOpen = !gateOpen;
+  const el = document.getElementById("gate");
+  el.textContent = gateOpen ? "APERTO" : "CHIUSO";
+  el.className = "num " + (gateOpen ? "warn" : "ok");
+  addDiary(gateOpen ? "Gate aperto" : "Gate chiuso");
+}
+function doKill() {
+  document.getElementById("kill").textContent = "ATTIVO";
+  document.getElementById("kill").className = "status-pill err";
+  addDiary("Kill Switch attivato");
+}
+function send() {
+  const sym = document.getElementById("sym").value.trim();
+  const entry = document.getElementById("entry").value;
+  const side = document.getElementById("side").value;
+  const msg = document.getElementById("msg");
+  if (!sym || !entry) { msg.textContent = "Simbolo e Entry obbligatori"; msg.style.color = "#ef4444"; return; }
+  msg.textContent = "Ordine in coda"; msg.style.color = "#10b981";
+  addDiary(side + " " + sym + " @ " + entry);
+}
+function addDiary(text) {
+  const ts = new Date().toLocaleTimeString("it-IT", {hour:"2-digit", minute:"2-digit"});
+  diary.unshift(ts + " · " + text);
+  if (diary.length > 5) diary.pop();
+  document.getElementById("diary").innerHTML = diary.join("<br>");
+}
+</script>
+</body>
+</html>
