@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="IMPERO">
+<meta name="theme-color" content="#0a0c10">
+<title>UFFICIO IMPERO · Terminal</title>
+<style>
+:root { --bg:#0a0c10; --card:#12151c; --border:#1e2430; --blue:#3b82f6; --gold:#d4af37; --green:#22c55e; --red:#ef4444; --text:#e2e8f0; --muted:#64748b; }
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif; padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom); min-height:100vh; }
+.screen { max-width:430px; margin:0 auto; }
+h1 { font-size:26px; font-weight:700; letter-spacing:-0.5px; }
+.sub { color:var(--muted); font-size:13px; margin:4px 0 16px; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:12px; }
+.row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; }
+.row .val { font-weight:600; font-size:17px; }
+.agents { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:14px 0; }
+.agent { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:10px 4px; text-align:center; }
+.agent .ico { font-size:22px; }
+.agent .nm { font-size:9px; color:var(--muted); margin-top:3px; font-weight:600; letter-spacing:0.5px; }
+.agent .st { font-size:8px; color:var(--green); margin-top:2px; }
+.btn { width:100%; padding:15px; border:none; border-radius:14px; font-size:15px; font-weight:600; margin:6px 0; }
+.btn-blue { background:var(--blue); color:#fff; }
+.btn-dark { background:#1e2430; color:var(--text); border:1px solid var(--border); }
+.btn-red { background:var(--red); color:#fff; }
+input, select { width:100%; padding:13px; border-radius:12px; border:1px solid var(--border); background:#0f1218; color:var(--text); margin:5px 0; font-size:16px; }
+.login { padding-top:70px; text-align:center; }
+.hidden { display:none !important; }
+.ok { color:var(--green); }
+.warn { color:var(--gold); }
+.err { color:var(--red); }
+.top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.badge { background:#1e2430; color:var(--blue); border-radius:20px; padding:4px 10px; font-size:10px; font-weight:600; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+</style>
+</head>
+<body>
+<div class="screen">
+<div id="login" class="login">
+  <div class="badge" style="display:inline-block;margin-bottom:14px;">LIVE</div>
+  <h1>UFFICIO IMPERO</h1>
+  <p class="sub">GROK AI TRADING TERMINAL<br>6 Agents · CEO Ara</p>
+  <input type="password" id="pw" placeholder="Password" autofocus style="text-align:center;margin:18px 0;">
+  <button class="btn btn-blue" onclick="login()">Entra</button>
+  <p id="err" class="err" style="display:none;margin-top:10px;">Password errata</p>
+</div>
+<div id="app" class="hidden">
+  <div class="top">
+    <div>
+      <div class="badge">THE TRADING FLOOR</div>
+      <h1 style="font-size:22px;margin-top:4px;">IMPERO</h1>
+    </div>
+    <button class="btn btn-dark" style="width:auto;padding:8px 14px;margin:0;font-size:13px;" onclick="logout()">Esci</button>
+  </div>
+  <div class="agents">
+    <div class="agent"><div class="ico">🔴</div><div class="nm">01 SCANNER</div><div class="st">● RUNNING</div></div>
+    <div class="agent"><div class="ico">🟢</div><div class="nm">02 ANALYST</div><div class="st">● RUNNING</div></div>
+    <div class="agent"><div class="ico">🟡</div><div class="nm">03 RESEARCH</div><div class="st">● RUNNING</div></div>
+    <div class="agent"><div class="ico">🔴</div><div class="nm">04 RISK</div><div class="st">● RUNNING</div></div>
+    <div class="agent"><div class="ico">🟣</div><div class="nm">05 EXECUTOR</div><div class="st">● RUNNING</div></div>
+    <div class="agent"><div class="ico">🔵</div><div class="nm">06 PORTFOLIO</div><div class="st">● RUNNING</div></div>
+  </div>
+  <div class="card">
+    <div class="row"><span>Capitale</span><span class="val" id="cap">— €</span></div>
+    <div class="row"><span>Equity</span><span class="val" id="eq">— €</span></div>
+    <div class="row"><span>Drawdown</span><span class="val" id="dd">— %</span></div>
+    <div class="row"><span>Gate</span><span class="val ok" id="gate">CHIUSO</span></div>
+    <div class="row"><span>Kill Switch</span><span class="val ok" id="kill">OK</span></div>
+  </div>
+  <button class="btn btn-dark" onclick="toggleGate()">Apri / Chiudi Gate</button>
+  <button class="btn btn-red" onclick="doKill()">Attiva Kill Switch</button>
+  <div class="card" style="margin-top:14px;">
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px;letter-spacing:1px;">ORDINE MANUALE</p>
+    <input id="sym" value="BZ=F" placeholder="Simbolo">
+    <div class="grid2">
+      <select id="side"><option>LONG</option><option>SHORT</option></select>
+      <input id="size" type="number" value="50" placeholder="Size €">
+    </div>
+    <input id="entry" type="number" step="0.0001" placeholder="Entry">
+    <div class="grid2">
+      <input id="stop" type="number" step="0.0001" placeholder="Stop">
+      <input id="tp" type="number" step="0.0001" placeholder="Take Profit">
+    </div>
+    <button class="btn btn-blue" onclick="send()">Invia in coda</button>
+    <p id="msg" style="text-align:center;margin-top:6px;font-size:13px;"></p>
+  </div>
+  <div class="card">
+    <p style="font-size:11px;color:var(--muted);margin-bottom:6px;">DIARIO</p>
+    <div id="diary" style="font-size:12px;color:var(--muted);line-height:1.6;">Nessuna voce</div>
+  </div>
+</div>
+</div>
+<script>
+const PASS = "impero2026";
+let gateOpen = false;
+let diary = [];
+function login() {
+  if (document.getElementById("pw").value === PASS) {
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    addDiary("Login effettuato");
+  } else document.getElementById("err").style.display = "block";
+}
+function logout() {
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("login").classList.remove("hidden");
+  document.getElementById("pw").value = "";
+  document.getElementById("err").style.display = "none";
+}
+function toggleGate() {
+  gateOpen = !gateOpen;
+  const el = document.getElementById("gate");
+  el.textContent = gateOpen ? "APERTO" : "CHIUSO";
+  el.className = "val " + (gateOpen ? "warn" : "ok");
+  addDiary(gateOpen ? "Gate aperto" : "Gate chiuso");
+}
+function doKill() {
+  document.getElementById("kill").textContent = "ATTIVO";
+  document.getElementById("kill").className = "val err";
+  addDiary("Kill Switch attivato");
+}
+function send() {
+  const sym = document.getElementById("sym").value.trim();
+  const entry = document.getElementById("entry").value;
+  const side = document.getElementById("side").value;
+  const msg = document.getElementById("msg");
+  if (!sym || !entry) {
+    msg.textContent = "Simbolo e Entry obbligatori";
+    msg.style.color = "#ef4444";
+    return;
+  }
+  msg.textContent = "Ordine in coda";
+  msg.style.color = "#22c55e";
+  addDiary("Ordine " + side + " " + sym + " @ " + entry);
+}
+function addDiary(text) {
+  const ts = new Date().toLocaleTimeString("it-IT", {hour:"2-digit", minute:"2-digit"});
+  diary.unshift(ts + " · " + text);
+  if (diary.length > 6) diary.pop();
+  document.getElementById("diary").innerHTML = diary.join("<br>");
+}
+</script>
+</body>
+</html>
