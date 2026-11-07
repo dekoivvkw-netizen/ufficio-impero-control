@@ -72,7 +72,7 @@ h1 { font-size:18px; margin:0; }
 <div id="prop" class="page"></div>
 <div id="oggi" class="page"></div>
 <script>
-const leads = [{"id": 1, "nome": "Rimodella Torino", "settore": "Estetica", "wa": "+393494746001", "stato": "non", "note": ""}, {"id": 2, "nome": "Elylashes di Elisa Cioce", "settore": "Estetica", "wa": "+393473276358", "stato": "non", "note": ""}, {"id": 3, "nome": "VERA Trucco Permanente", "settore": "Estetica", "wa": "+393336478884", "stato": "non", "note": ""}, {"id": 4, "nome": "Il Piede Centro Estetico", "settore": "Estetica", "wa": "+393391637555", "stato": "non", "note": ""}, {"id": 5, "nome": "Que Bolà", "settore": "Ristorante", "wa": "+393751187171", "stato": "non", "note": ""}];
+const leads = [{"id":1,"nome":"Rimodella Torino","settore":"Estetica","wa":"+393494746001","stato":"non","note":""},{"id":2,"nome":"Elylashes di Elisa Cioce","settore":"Estetica","wa":"+393473276358","stato":"non","note":""},{"id":3,"nome":"VERA Trucco Permanente","settore":"Estetica","wa":"+393336478884","stato":"non","note":""},{"id":4,"nome":"Il Piede Centro Estetico","settore":"Estetica","wa":"+393391637555","stato":"non","note":""},{"id":5,"nome":"Que Bolà","settore":"Ristorante","wa":"+393751187171","stato":"non","note":""},{"id":6,"nome":"Anime Lash - Beauty & Academy Torino","settore":"Estetica","wa":"+39393477101284","stato":"non","note":""},{"id":7,"nome":"Squash Point Palestra Torino","settore":"Palestra","wa":"+393395932271","stato":"non","note":""},{"id":8,"nome":"centro yoga samadhi","settore":"Palestra","wa":"+393474278055","stato":"non","note":""},{"id":9,"nome":"Antonio Liggieri Personal Trainer Torino","settore":"Palestra","wa":"+393467255533","stato":"non","note":""},{"id":10,"nome":"Tre da Tre Ristorante Pizzeria","settore":"Ristorante","wa":"+393456386687","stato":"non","note":""},{"id":11,"nome":"Nerio Gainotti","settore":"Palestra","wa":"+393482431383","stato":"non","note":""},{"id":12,"nome":"Centro Fitness Mirafiori","settore":"Palestra","wa":"+393240950865","stato":"non","note":""},{"id":13,"nome":"Tonelli Studio Massoterapico","settore":"Estetica","wa":"+393397424882","stato":"non","note":""},{"id":14,"nome":"Studio Pilates Linee","settore":"Palestra","wa":"+393290380068","stato":"non","note":""},{"id":15,"nome":"Le Cicale Centro estetico","settore":"Estetica","wa":"+393888989217","stato":"non","note":""},{"id":16,"nome":"Mi Yan - Parrucchiere, Estetica, Nails","settore":"Estetica","wa":"+393514988796","stato":"non","note":""},{"id":17,"nome":"Sterlin Polo Estetica e Benessere","settore":"Estetica","wa":"+393929215388","stato":"non","note":""},{"id":18,"nome":"Arte in Movimento","settore":"Palestra","wa":"+393491772403","stato":"non","note":""},{"id":19,"nome":"Dott. Matteo Golfieri Personal Trainer","settore":"Palestra","wa":"+393203497985","stato":"non","note":""},{"id":20,"nome":"FFTraining","settore":"Palestra","wa":"+393318035145","stato":"non","note":""},{"id":21,"nome":"Il Tuo Tempo di Cristina Casagrande","settore":"Palestra","wa":"+393341029023","stato":"non","note":""},{"id":22,"nome":"Personal Trainer Daniele Torrisi","settore":"Palestra","wa":"+393409249499","stato":"non","note":""},{"id":23,"nome":"Studio di Ragioneria Martellotta Giuseppe","settore":"Studio","wa":"+393356367616","stato":"non","note":""},{"id":24,"nome":"Manni Dr. Alberto","settore":"Studio","wa":"+393339430172","stato":"non","note":""},{"id":25,"nome":"CLM Consulting","settore":"Studio","wa":"+393314410588","stato":"non","note":""}];
 let filter = "Tutti";
 const settori = ["Tutti","Estetica","Palestra","Ristorante","Studio"];
 const messaggi = {
@@ -92,7 +92,7 @@ function show(id) {
   if (id === 'oggi') renderOggi();
 }
 function statoLabel(s) {
-  return {non:"Non contattato", contattato:"Contattato", risposto:"Risposto", call:"Call fissata", proposta:"Proposta"}[s] || s;
+  return {non:"Non contattato",contattato:"Contattato",risposto:"Risposto",call:"Call fissata",proposta:"Proposta"}[s] || s;
 }
 function renderFilters() {
   document.getElementById('filters').innerHTML = settori.map(s => 
@@ -148,10 +148,10 @@ function renderMsg() {
   }).join('');
 }
 function renderProp() {
-  const first = leads.find(l => l.stato === 'call' || l.stato === 'proposta') || leads[0];
-  const text = `Oggetto: Proposta pilota 30 giorni — ${first.nome}\n\nCiao,\n\ncome da chiamata, ecco la proposta per ${first.nome}:\n\nCosa faccio\n- Configuro risposte automatiche WhatsApp\n- Imposto follow-up a 24h e 7 giorni\n- Ti do una dashboard con le richieste\n- Report ogni venerdì\n\nKPI\n- Tempo prima risposta\n- % follow-up eseguiti\n- Prenotazioni/iscrizioni generate\n\nPrezzo\n- Setup: €297\n- Primo mese: €97\n- Dopo: €197/mese o stop\n\nDurata: 30 giorni dal kickoff.\n\nSe ok, rispondi con \"confermo\" e ti mando i passi per l'accesso WhatsApp.`;
+  const selected = leads.find(l => l.stato === 'call' || l.stato === 'proposta') || leads[0];
+  const text = `Oggetto: Proposta pilota 30 giorni — ${selected.nome}\n\nCiao,\n\ncome da chiamata, ecco la proposta:\n\nCosa faccio\n- Configuro risposte automatiche WhatsApp\n- Imposto follow-up a 24h e 7 giorni\n- Ti do una dashboard con le richieste\n- Report ogni venerdì\n\nKPI\n- Tempo prima risposta\n- % follow-up eseguiti\n- Prenotazioni/iscrizioni generate\n\nPrezzo\n- Setup: €297\n- Primo mese: €97\n- Dopo: €197/mese o stop\n\nDurata: 30 giorni dal kickoff.\n\nSe ok, rispondi con \"confermo\" e ti mando i passi per l'accesso WhatsApp.`;
   document.getElementById('prop').innerHTML = `<div class="card">
-    <div class="name">Proposta per ${first.nome}</div>
+    <div class="name">Proposta per: ${selected.nome}</div>
     <div class="msg">${text}</div>
     <button class="btn" onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText); this.innerText='Copiato'; setTimeout(()=>this.innerText='Copia proposta',1200)">Copia proposta</button>
   </div>`;
@@ -169,11 +169,13 @@ function updateAgents() {
   document.getElementById('a-filter').textContent = leads.filter(l => l.stato !== 'non').length;
 }
 function exportCSV() {
-  const csv = "nome,settore,whatsapp,stato,note\n" + leads.map(l => `"${l.nome}","${l.settore}","${l.wa}","${l.stato}","${l.note||''}"`).join("\n");
+  const rows = [["Nome","Settore","WhatsApp","Stato","Note"]];
+  leads.forEach(l => rows.push([l.nome, l.settore, l.wa, l.stato, l.note||""]));
+  const csv = rows.map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(",")).join("\n");
   const blob = new Blob([csv], {type:"text/csv"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "wolfstreet_leads.csv";
+  a.download = "wolfstreet_lead.csv";
   a.click();
 }
 function save() { localStorage.setItem('wolf_v5', JSON.stringify(leads)); }
