@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>WOLFSTREET · Comando</title>
+<style>
+:root { --bg:#09090b; --card:#121214; --line:#27272a; --text:#fafafa; --muted:#a1a1aa; --blue:#3b82f6; --gold:#f2c94c; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,sans-serif; padding:14px; padding-bottom:90px; }
+h1 { font-size:22px; margin:0; }
+.sub { color:var(--muted); font-size:12px; margin:2px 0 14px; }
+.kpi { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; }
+.kpi .card { text-align:center; padding:10px 6px; }
+.kpi .n { font-size:20px; font-weight:800; color:var(--gold); }
+.kpi .l { font-size:9px; color:var(--muted); text-transform:uppercase; }
+.tabs { display:flex; gap:6px; overflow-x:auto; margin-bottom:12px; }
+.tab { background:var(--line); border:none; color:var(--text); padding:8px 14px; border-radius:8px; font-size:12px; }
+.tab.active { background:var(--blue); }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; }
+.row { display:flex; justify-content:space-between; align-items:center; }
+.name { font-weight:700; font-size:14px; }
+.meta { color:var(--muted); font-size:11px; }
+.badge { font-size:10px; padding:3px 8px; border-radius:20px; }
+.badge.non { background:#27272a; color:#a1a1aa; }
+.btn { background:var(--blue); color:#fff; border:none; padding:8px 12px; border-radius:8px; font-size:12px; }
+.search { width:100%; background:var(--card); border:1px solid var(--line); color:var(--text); border-radius:8px; padding:10px; margin-bottom:10px; }
+</style>
+</head>
+<body>
+<h1>WOLFSTREET · Comando</h1>
+<p class="sub">Torino · 50 lead · 7 novembre 2026</p>
+<div class="kpi">
+  <div class="card"><div class="n">50</div><div class="l">Lead</div></div>
+  <div class="card"><div class="n">0</div><div class="l">Contattati</div></div>
+  <div class="card"><div class="n">0</div><div class="l">Risposte</div></div>
+  <div class="card"><div class="n">0</div><div class="l">Call</div></div>
+</div>
+<div class="tabs">
+  <button class="tab active">Lead</button>
+  <button class="tab">Messaggi</button>
+  <button class="tab">Proposta</button>
+  <button class="tab">Oggi</button>
+</div>
+<input class="search" placeholder="Cerca lead...">
+<div class="card"><div class="row"><div><div class="name">Rimodella Torino</div><div class="meta">Estetica · +393494746001</div></div><span class="badge non">Non contattato</span></div></div>
+<div class="card"><div class="row"><div><div class="name">Elylashes</div><div class="meta">Estetica · +393473276358</div></div><span class="badge non">Non contattato</span></div></div>
+<div class="card"><div class="row"><div><div class="name">VERA Trucco</div><div class="meta">Estetica · +393336478884</div></div><span class="badge non">Non contattato</span></div></div>
+</body>
+</html>
