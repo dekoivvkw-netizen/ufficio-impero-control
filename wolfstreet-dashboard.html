@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>WOLFSTREET · Comando</title>
+<style>
+:root { --bg:#0a0c10; --card:#12151c; --line:#1e2430; --text:#e2e8f0; --muted:#64748b; --blue:#3b82f6; --green:#22c55e; --gold:#f2c94c; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,sans-serif; padding:12px; padding-bottom:80px; }
+h1 { font-size:20px; margin:0; }
+.sub { color:var(--muted); font-size:12px; margin:2px 0 12px; }
+.tabs { display:flex; gap:6px; overflow-x:auto; margin-bottom:12px; }
+.tab { background:var(--line); border:none; color:var(--text); padding:8px 12px; border-radius:8px; font-size:12px; white-space:nowrap; }
+.tab.active { background:var(--blue); }
+.page { display:none; }
+.page.active { display:block; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; }
+.row { display:flex; justify-content:space-between; align-items:center; }
+.name { font-weight:700; font-size:14px; }
+.meta { color:var(--muted); font-size:11px; }
+.badge { font-size:10px; padding:2px 8px; border-radius:20px; }
+.badge.non { background:#1e2430; }
+.badge.contattato { background:#1a3a5c; color:#60a5fa; }
+.badge.risposto { background:#1a3a2c; color:#4ade80; }
+.badge.call { background:#3a2a1a; color:#fbbf24; }
+.msg { background:#0a0c10; border:1px solid var(--line); border-radius:8px; padding:10px; font-size:12px; white-space:pre-wrap; margin:8px 0; }
+.btn { background:var(--blue); color:#fff; border:none; padding:8px 12px; border-radius:8px; font-size:12px; width:100%; margin-top:6px; }
+.btn.sec { background:transparent; border:1px solid var(--line); color:var(--text); }
+.kpi { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+.kpi .card { text-align:center; padding:10px; }
+.kpi .n { font-size:22px; font-weight:800; color:var(--gold); }
+.kpi .l { font-size:10px; color:var(--muted); }
+</style>
+</head>
+<body>
+<h1>WOLFSTREET · Comando</h1>
+<p class="sub">Torino · 50 lead · 7 novembre 2026</p>
+<div class="kpi">
+  <div class="card"><div class="n" id="k-tot">50</div><div class="l">Lead</div></div>
+  <div class="card"><div class="n" id="k-con">0</div><div class="l">Contattati</div></div>
+  <div class="card"><div class="n" id="k-ris">0</div><div class="l">Risposte</div></div>
+</div>
+<div class="tabs">
+  <button class="tab active" onclick="show('lead')">Lead</button>
+  <button class="tab" onclick="show('msg')">Messaggi</button>
+  <button class="tab" onclick="show('oggi')">Oggi</button>
+</div>
+<div id="lead" class="page active"></div>
+<div id="msg" class="page"></div>
+<div id="oggi" class="page"></div>
+<script>
+const leads = [
+  {id:1, nome:"Rimodella Torino", settore:"Estetica", wa:"+393494746001", stato:"non"},
+  {id:2, nome:"Elylashes", settore:"Estetica", wa:"+393473276358", stato:"non"},
+  {id:3, nome:"VERA Trucco", settore:"Estetica", wa:"+393336478884", stato:"non"},
+  {id:4, nome:"Il Piede", settore:"Estetica", wa:"+393391637555", stato:"non"},
+  {id:5, nome:"Que Bolà", settore:"Ristorante", wa:"+393751187171", stato:"non"},
+  {id:6, nome:"Anime Lash", settore:"Estetica", wa:"+39393477101284", stato:"non"},
+  {id:7, nome:"Squash Point", settore:"Palestra", wa:"+393395932271", stato:"non"},
+  {id:8, nome:"Yoga Samadhi", settore:"Palestra", wa:"+393474278055", stato:"non"},
+  {id:9, nome:"Antonio Liggieri", settore:"PT", wa:"+393467255533", stato:"non"},
+  {id:10, nome:"Tre da Tre", settore:"Ristorante", wa:"+393456386687", stato:"non"}
+];
+const messaggi = {
+  Estetica: "Ciao, sono di WOLFSTREET.\n\nHo visto [NOME]. Hai WhatsApp ma non una gestione automatica delle richieste.\n\nPosso configurare in 48h un sistema che:\n- risponde subito\n- fa follow-up a chi non prenota\n- ti mostra quante richieste arrivano\n\n30 giorni di prova, €97 il primo mese. Se non funziona, smetti.\n\nTi interessa una chiamata di 15 minuti?",
+  Palestra: "Ciao, sono di WOLFSTREET.\n\nMolti personal trainer perdono clienti perché non fanno follow-up dopo la prova.\n\nPosso impostare un sistema che:\n- ricontatta chi ha fatto la prova e non si è iscritto\n- ricorda le scadenze\n- traccia chi ha risposto\n\n30 giorni, €97. Poi decidi.\n\nVuoi una chiamata di 15 minuti?",
+  PT: "Ciao, sono di WOLFSTREET.\n\nMolti personal trainer perdono clienti perché non fanno follow-up dopo la prova.\n\nPosso impostare un sistema che:\n- ricontatta chi ha fatto la prova e non si è iscritto\n- ricorda le scadenze\n- traccia chi ha risposto\n\n30 giorni, €97. Poi decidi.\n\nVuoi una chiamata di 15 minuti?",
+  Ristorante: "Ciao, sono di WOLFSTREET.\n\nHo notato [NOME]. Ricevi richieste su WhatsApp ma non hai un sistema di follow-up.\n\nPosso configurare risposte automatiche per disponibilità e conferme.\n\nProva 30 giorni a €97. Se non serve, smetti.\n\nTi va una chiamata di 10 minuti?"
+};
+function show(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(id).classList.add('active');
+  if (id === 'lead') renderLead();
+  if (id === 'msg') renderMsg();
+  if (id === 'oggi') renderOggi();
+}
+function statoLabel(s) {
+  return {non:"Non contattato", contattato:"Contattato", risposto:"Risposto", call:"Call fissata"}[s] || s;
+}
+function renderLead() {
+  const el = document.getElementById('lead');
+  el.innerHTML = leads.map(l => `
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="name">${l.nome}</div>
+          <div class="meta">${l.settore} · ${l.wa}</div>
+        </div>
+        <span class="badge ${l.stato}">${statoLabel(l.stato)}</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <button class="btn" onclick="setStato(${l.id},'contattato')">Contattato</button>
+        <button class="btn sec" onclick="setStato(${l.id},'risposto')">Risposto</button>
+        <button class="btn sec" onclick="setStato(${l.id},'call')">Call</button>
+      </div>
+    </div>
+  `).join('');
+  updateKpi();
+}
+function setStato(id, s) {
+  const l = leads.find(x => x.id === id);
+  if (l) l.stato = s;
+  localStorage.setItem('wolf_leads', JSON.stringify(leads));
+  renderLead();
+}
+function renderMsg() {
+  const el = document.getElementById('msg');
+  el.innerHTML = leads.slice(0,5).map(l => {
+    const tpl = messaggi[l.settore] || messaggi.Estetica;
+    const text = tpl.replace('[NOME]', l.nome);
+    return `<div class="card">
+      <div class="name">${l.nome}</div>
+      <div class="meta">${l.wa}</div>
+      <div class="msg">${text}</div>
+      <button class="btn" onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText); this.innerText='Copiato'; setTimeout(()=>this.innerText='Copia',1200)">Copia</button>
+    </div>`;
+  }).join('');
+}
+function renderOggi() {
+  const el = document.getElementById('oggi');
+  const todo = leads.filter(l => l.stato === 'non').slice(0,5);
+  el.innerHTML = `<div class="card"><div class="name">Da contattare oggi</div>
+    ${todo.map(l => `<div class="row" style="padding:6px 0;border-bottom:1px solid #1e2430"><span>${l.nome}</span><span class="meta">${l.wa}</span></div>`).join('')}
+  </div>
+  <div class="card"><div class="name">Target</div>
+    <div class="meta">Contattare 5 lead · Ottenere 1 risposta</div>
+  </div>`;
+}
+function updateKpi() {
+  document.getElementById('k-con').textContent = leads.filter(l => l.stato !== 'non').length;
+  document.getElementById('k-ris').textContent = leads.filter(l => l.stato === 'risposto' || l.stato === 'call').length;
+}
+try {
+  const saved = JSON.parse(localStorage.getItem('wolf_leads') || '[]');
+  if (saved.length) {
+    saved.forEach(s => {
+      const l = leads.find(x => x.id === s.id);
+      if (l) l.stato = s.stato;
+    });
+  }
+} catch(e) {}
+renderLead();
+</script>
+</body>
+</html>
