@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>WOLFSTREET AI GROUP</title>
+<style>
+body { background:#0a0c10; color:#e2e8f0; font-family:-apple-system,sans-serif; padding:16px; margin:0; }
+h1 { font-size:22px; margin:0 0 4px; }
+.sub { color:#64748b; font-size:13px; margin-bottom:16px; }
+.card { background:#12151c; border:1px solid #1e2430; border-radius:12px; padding:14px; margin-bottom:10px; }
+.row { display:flex; justify-content:space-between; padding:6px 0; }
+.val { font-weight:600; }
+.tabs { display:flex; gap:6px; margin-bottom:12px; overflow-x:auto; }
+.tab { background:#1e2430; border:none; color:#e2e8f0; padding:8px 12px; border-radius:8px; font-size:12px; }
+.tab.active { background:#3b82f6; }
+.hidden { display:none; }
+</style>
+</head>
+<body>
+<h1>WOLFSTREET AI GROUP</h1>
+<p class="sub">Dashboard di comando · 90 giorni</p>
+<div class="tabs">
+  <button class="tab active" onclick="show('ceo')">CEO</button>
+  <button class="tab" onclick="show('ops')">Operations</button>
+  <button class="tab" onclick="show('cs')">Client Success</button>
+  <button class="tab" onclick="show('sec')">Security</button>
+</div>
+<div id="ceo">
+  <div class="card">
+    <div class="row"><span>Prospect</span><span class="val">0/35</span></div>
+    <div class="row"><span>Discovery</span><span class="val">0/15</span></div>
+    <div class="row"><span>Piloti attivi</span><span class="val">0/3</span></div>
+    <div class="row"><span>Incidenti</span><span class="val">0</span></div>
+  </div>
+  <div class="card">Decisioni da approvare: nessuna</div>
+  <div class="card">Alert critici: nessuno</div>
+</div>
+<div id="ops" class="hidden">
+  <div class="card">
+    <div class="row"><span>ATLAS</span><span class="val">DEMO</span></div>
+    <div class="row"><span>VERA</span><span class="val">DEMO</span></div>
+    <div class="row"><span>ECHO</span><span class="val">DEMO</span></div>
+  </div>
+</div>
+<div id="cs" class="hidden">
+  <div class="card">Piloti con baseline: 0</div>
+  <div class="card">Case study: 0</div>
+</div>
+<div id="sec" class="hidden">
+  <div class="card">Incidenti critici: 0</div>
+  <div class="card">SENTINEL: roadmap</div>
+</div>
+<script>
+function show(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  ['ceo','ops','cs','sec'].forEach(x => document.getElementById(x).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+</script>
+</body>
+</html>
